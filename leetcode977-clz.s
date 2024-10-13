@@ -1,11 +1,17 @@
 .data
     int_list: .word 0, 10, 25
     list_size: .word 3
+    res_list: .word 0, 0, 0
 .text
     main:
         la a0, int_list
         lw a1, list_size
         jal ra, compute_bytes_needed
+        mv a3, a0
+        la a0, int_list
+        lw a1, list_size
+        la a2, res_list
+        jal ra, move_data
         li a7, 10 
         ecall
     my_clz:
@@ -77,3 +83,36 @@
             lw ra, 12(sp)                         # pop ra from stack
             addi sp, sp, 16                       # update stack position to deallocate 4 words
             jr ra                                 # return to caller
+     move_data:
+         # a0: num[]
+         # a1: num_size
+         # a2: res[]
+         # a3: num_bits
+         li t0, 0                                 # t0 = idx = 0
+         move_data_loop:
+             slt t1, t0, a1                       # t1 = idx < n 
+             beq t1, x0, loop_end                 # terminate loop if (idx >= n)
+             slli t1, t0, 2                       # t1 = idx << 2 
+             add t1, a0, t1                       # t1 = &nums + (idx << 2)
+             lw t1, 0(t1)                         # t1 = nums[idx]
+             slti t2, a3, 8                       # t2 = num_bits < 8
+             bne t2, x0, store_byte               # store byte if (num_bits < 8)
+             slti t2, a3, 16                      # t2 = num_bits < 16
+             bne t2, x0, store_half               # store half if (num_bits < 16)
+             addi t2, t0, 2                       # t2 = idx << 2
+             add t2, a2, t2                       # t2 = res + idx << 2
+             sw t1, 0(t2)                         # store nums[idx] to res[idx]
+             j end_store
+         store_half:
+             addi t2, t0, 1                       # t2 = idx << 1
+             add t2, a2, t2                       # t2 = res + (idx << 1)
+             sh t1, 0(t2)                         # store nums[idx] to res[idx]
+             j end_store
+         store_byte:
+             add t2, a2, t0                       # t2 = res + idx
+             sb t1, 0(t2)                         # store nums[idx] to res[idx]
+         end_store:
+             addi t0, t0, 1                       # t0 = t0 + 1; idx = idx + 1
+             j move_data_loop
+         loop_end:
+             jr ra

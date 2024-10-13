@@ -1,8 +1,12 @@
 .data
-    array: .word -4, -1, 0, 3, 10
+    #array: .word -4, -1, 0, 3, 10
+    #array: .word -7, -3, 2, 3, 11
+    array: .word -1, 3, 8, 10, 22
     array_size: .word 5
     output_array: .word 0, 0, 0, 0, 0
-    output_answer: .word 0, 1, 9, 16, 100
+    #output_answer: .word 0, 1, 9, 16, 100
+    #output_answer: .word 4, 9, 9, 49, 121
+    output_answer: .word 1, 9, 64, 100, 484
     string_match_message: .asciz "The answer is correct."
     string_mismatch_message: .asciz "The answer is incorrect."
 .text
@@ -61,8 +65,7 @@
             j loop_for_split_point                # repeat loop
             after_split_point:          
                 srli s0, t0, 2                    # s0 = 4i / 4 = i 
-        loop_for_split_point_end:
-            # s0 = right
+        loop_for_split_point_end:                 # s0 = right
             addi s1, s0, -1                       # s1 = left = splitPoint - 1   
             mv s2, x0                             # s2 = resIdx = 0
         bidirectional_loop:

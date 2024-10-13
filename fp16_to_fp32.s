@@ -14,7 +14,6 @@ fp16_to_fp32:
         and s1, s1, s0    # s1 = sign = w & sign_mask(0x80000000)
         li s2, 0x7FFFFFFF # s2 = non_sign mask = 0x7FFFFFFF
         and s2, s2, s0    # s2 = no_sign = w & non_sign_mask(0x7FFFFFFF)
-        # jr ra
         mv a0, s2         # a0 = s2 = no_sign
         jal ra, my_clz    # a0 = renorm_shift = number of leading zeros
         li s3, 0          # s3 = renorm_shift = 0

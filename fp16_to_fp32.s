@@ -1,13 +1,12 @@
 fp16_to_fp32:
     fp16_to_fp32_prologue:
-        addi sp, sp, -28
+        addi sp, sp, -24
         sw ra, 0(sp)
         sw s0, 4(sp)
         sw s1, 8(sp)
         sw s2, 12(sp)
         sw s3, 16(sp)
         sw s4, 20(sp)
-        sw s5, 24(sp)
     fp16_to_fp32_prologue_after:
         slli s0, a0, 16   # s0 = w
         li s1, 0x80000000 # s1 = sign mask = 0x80000000
@@ -46,6 +45,5 @@ fp16_to_fp32:
         lw s2, 12(sp)
         lw s3, 16(sp)
         lw s4, 20(sp)
-        lw s5, 24(sp)
-        addi sp, sp, 28
+        addi sp, sp, 24
         jr ra

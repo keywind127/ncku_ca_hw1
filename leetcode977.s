@@ -2,6 +2,9 @@
     array: .word -4, -1, 0, 3, 10
     array_size: .word 5
     output_array: .word 0, 0, 0, 0, 0
+    output_answer: .word 0, 1, 9, 16, 100
+    string_match_message: .asciz "The answer is correct."
+    string_mismatch_message: .asciz "The answer is incorrect."
 .text
     main:
         la a0, array
@@ -9,8 +12,42 @@
         lw a1, 0(a1)
         la a2, output_array
         jal ra, sorted_squares
+        la a0, output_array
+        la a1, output_answer
+        lw a2, array_size
+        jal ra, check_result
+        bne a0, x0, answer_match
+    answer_mismatch:
+        la a0, string_mismatch_message
+        li a7, 4 
+        ecall
+        j answer_check_end
+    answer_match:
+        la a0, string_match_message
+        li a7, 4
+        ecall
+    answer_check_end:
         li a7, 10 
         ecall
+    check_result:
+        mv t0, x0                                 # t0 = i = 0 
+        check_result_loop:
+            slt t1, t0, a2                        # t1 = i < n
+            beq t1, x0, check_result_loop_end     # terminate loop if i >= n
+            slli t1, t0, 2                        # t1 = i << 2
+            add t2, a0, t1                        # t2 = &nums + (i << 2)
+            add t3, a1, t1                        # t3 = &result + (i << 2)
+            lw t2, 0(t2)                          # t2 = nums[i]
+            lw t3, 0(t3)                          # t3 = result[i]
+            beq t2, t3, continue_loop
+            mv a0, x0
+            jr ra
+        continue_loop:
+            addi t0, t0, 1                        # t0 = t0 + 1; i = i + 1
+            j check_result_loop
+        check_result_loop_end:
+            addi a0, x0, 1
+            jr ra
     sorted_squares:
         mv t0, x0                                 # t0 = 4i = 0
         mv s0, a1                                 # s0 = splitPoint = numsSize

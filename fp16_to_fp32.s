@@ -14,6 +14,7 @@ fp16_to_fp32:
         and s1, s1, s0    # s1 = sign = w & sign_mask(0x80000000)
         li s2, 0x7FFFFFFF # s2 = non_sign mask = 0x7FFFFFFF
         and s2, s2, s0    # s2 = no_sign = w & non_sign_mask(0x7FFFFFFF)
+        # jr ra
         mv a0, s2         # a0 = s2 = no_sign
         jal ra, my_clz    # a0 = renorm_shift = number of leading zeros
         li s3, 0          # s3 = renorm_shift = 0
@@ -24,7 +25,7 @@ fp16_to_fp32:
     fp16_to_fp32_post_overflow_check:
         li s4, 0x04000000 # s4 = 0x04000000
         add s4, s2, s4    # s4 = no_sign + 0x04000000
-        srli s4, s4, 8    # s4 = (no_sign + 0x04000000) >> 8
+        srai s4, s4, 8    # s4 = (no_sign + 0x04000000) >> 8
         li t0, 0x7F800000 # t0 = 0x7F800000
         and s4, s4, t0    # s4 = inf_nan_mask = ((no_sign + 0x04000000) >> 8) & 0x7F800000
         addi s5, s2, -1 # s5 = no_sign - 1

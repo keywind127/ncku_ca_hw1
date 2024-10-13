@@ -103,7 +103,7 @@
             j bidirectional_loop_end
         left_directional_end:
             slt t0, s0, a1                        # t0 = right < numsSize
-            beq t0, x0, abc                       # terminate loop if right >= numsSize
+            beq t0, x0, right_directional_end     # terminate loop if right >= numsSize
             slli t0, s0, 2                        # t0 = right << 2
             add t0, a0, t0                        # t0 = &nums + (right << 2)
             lw t0, 0(t0)                          # t0 = nums[right]
@@ -114,6 +114,5 @@
             addi s0, s0, 1                        # s0 = s0 + 1; right = right + 1
             addi s2, s2, 1                        # s2 = s2 + 1; resIdx = resIdx + 1
             j left_directional_end
-        abc:
-            mv a0, a0 
+        right_directional_end:
             jr ra

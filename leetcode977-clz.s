@@ -104,7 +104,7 @@
              sw t1, 0(t2)                         # store nums[idx] to res[idx]
              j end_store
          store_half:
-             addi t2, t0, 1                       # t2 = idx << 1
+             slli t2, t0, 1                       # t2 = idx << 1
              add t2, a2, t2                       # t2 = res + (idx << 1)
              sh t1, 0(t2)                         # store nums[idx] to res[idx]
              j end_store
